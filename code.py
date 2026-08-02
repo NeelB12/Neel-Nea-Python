@@ -79,9 +79,9 @@ def show_start_screen():
     ).pack(pady=35)
 
     def play():
-        # The play button currently closes the screen
+        # Open the simple driving game when the play button is pressed
         screen.destroy()
-        root.destroy()
+        show_game_screen()
 
     tk.Button(
         screen,
@@ -90,6 +90,67 @@ def show_start_screen():
         font=("Arial", 12, "bold"),
         command=play
     ).pack(expand=True)
+
+
+def show_game_screen():
+    # Create a simple top-down 2D driving game
+    game_window = tk.Toplevel(root)
+    game_window.title("Driving Test Sim")
+    game_window.geometry("700x500")
+    game_window.resizable(False, False)
+
+    canvas = tk.Canvas(game_window, width=650, height=450, bg="#2f4f4f", highlightthickness=0)
+    canvas.pack(padx=10, pady=10)
+
+    # Draw a simple road layout
+    canvas.create_rectangle(90, 50, 560, 400, fill="#444444", outline="")
+    canvas.create_rectangle(220, 80, 430, 370, fill="#666666", outline="")
+
+    for y in range(90, 370, 35):
+        canvas.create_line(325, y, 325, y + 20, fill="white", width=4)
+
+    for x in range(110, 560, 35):
+        canvas.create_line(x, 225, x + 20, 225, fill="white", width=4)
+
+    car = canvas.create_rectangle(300, 210, 340, 250, fill="#1e90ff", outline="black", width=2)
+
+    x_pos = 300
+    y_pos = 210
+    speed = 8
+    keys = {"w": False, "a": False, "s": False, "d": False}
+
+    def update_game():
+        nonlocal x_pos, y_pos
+
+        if keys["w"]:
+            y_pos -= speed
+        if keys["s"]:
+            y_pos += speed
+        if keys["a"]:
+            x_pos -= speed
+        if keys["d"]:
+            x_pos += speed
+
+        x_pos = max(90, min(560 - 40, x_pos))
+        y_pos = max(50, min(400 - 40, y_pos))
+
+        canvas.coords(car, x_pos, y_pos, x_pos + 40, y_pos + 40)
+        game_window.after(20, update_game)
+
+    def on_key_press(event):
+        key = event.keysym.lower()
+        if key in keys:
+            keys[key] = True
+
+    def on_key_release(event):
+        key = event.keysym.lower()
+        if key in keys:
+            keys[key] = False
+
+    game_window.bind("<KeyPress>", on_key_press)
+    game_window.bind("<KeyRelease>", on_key_release)
+    game_window.focus_set()
+    update_game()
 
 
 def login_window():
