@@ -1,3 +1,4 @@
+# A simple driving simulator project for school work
 import tkinter as tk
 from tkinter import messagebox
 import json
@@ -5,22 +6,26 @@ import os
 
 FILE_NAME = "users.json"
 
+# Create the user file if it does not already exist
 if not os.path.exists(FILE_NAME):
     with open(FILE_NAME, "w") as f:
         json.dump({}, f)
 
 
 def load_users():
+    # Load the saved user information from the file
     with open(FILE_NAME, "r") as f:
         return json.load(f)
 
 
 def save_users(users):
+    # Save the user information back to the file
     with open(FILE_NAME, "w") as f:
         json.dump(users, f, indent=4)
 
 
 def register_window():
+    # Open the registration window
     window = tk.Toplevel(root)
     window.title("Register")
     window.geometry("300x180")
@@ -35,6 +40,7 @@ def register_window():
     password.pack()
 
     def register():
+        # Check whether the new account details are valid
         users = load_users()
 
         user = username.get().strip()
@@ -57,7 +63,37 @@ def register_window():
     tk.Button(window, text="Register", command=register).pack(pady=15)
 
 
+def show_start_screen():
+    # Show the next screen after a successful login
+    root.withdraw()
+
+    screen = tk.Toplevel(root)
+    screen.title("Start Driving Test")
+    screen.geometry("400x250")
+    screen.resizable(False, False)
+
+    tk.Label(
+        screen,
+        text="Start Driving Test Sim",
+        font=("Arial", 16, "bold")
+    ).pack(pady=35)
+
+    def play():
+        # The play button currently closes the screen
+        screen.destroy()
+        root.destroy()
+
+    tk.Button(
+        screen,
+        text="▶ Play",
+        width=15,
+        font=("Arial", 12, "bold"),
+        command=play
+    ).pack(expand=True)
+
+
 def login_window():
+    # Open the login window
     window = tk.Toplevel(root)
     window.title("Login")
     window.geometry("300x180")
@@ -72,6 +108,7 @@ def login_window():
     password.pack()
 
     def login():
+        # Check whether the username and password match
         users = load_users()
 
         user = username.get().strip()
@@ -79,7 +116,8 @@ def login_window():
 
         if user in users and users[user] == pwd:
             messagebox.showinfo("Success", "Login Successful!")
-            root.destroy()      # Closes the whole application
+            window.destroy()
+            show_start_screen()
         else:
             messagebox.showerror(
                 "Login Failed",
@@ -90,10 +128,11 @@ def login_window():
 
 
 root = tk.Tk()
-root.title("Driving Simulator")
+root.title("Driving Simulator (school project)")
 root.geometry("300x220")
 root.resizable(False, False)
 
+# Main menu for the project
 tk.Label(
     root,
     text="Driving Simulator",
