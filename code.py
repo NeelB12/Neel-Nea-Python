@@ -105,4 +105,3 @@ tk.Button(root, text="Login", width=20, command=login_window).pack(pady=5)
 tk.Button(root, text="Exit", width=20, command=root.destroy).pack(pady=20)
 
 root.mainloop()
-tes
